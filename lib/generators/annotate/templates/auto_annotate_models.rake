@@ -51,7 +51,7 @@ if Rails.env.development?
       'wrapper_open'                => nil,
       'wrapper_close'               => nil,
       'with_comment'                => 'true',
-      'routes_command'              => 'rake routes'
+      'routes_command'              => '<%= Rails.version.to_f >= 6.0 ? "rails routes" : "rake routes" %>'
     )
   end
 
