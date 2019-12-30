@@ -285,7 +285,34 @@ describe AnnotateRoutes do
     it 'should add a timestamp when :timestamp is passed' do
       expect(File).to receive(:read).with(ROUTE_FILE).and_return("ActionController::Routing...\nfoo")
       expect(@mock_file).to receive(:puts).with(/ActionController::Routing...\nfoo\n\n# == Route Map \(Updated \d{4}-\d{2}-\d{2} \d{2}:\d{2}\)\n#\n# another good line\n# good line\n/)
-      AnnotateRoutes.do_annotations timestamp: true
+      AnnotateRoutes.do_annotations(timestamp: true)
+    end
+  end
+
+  describe "When adding with Rails versions greater than 6.0.0" do
+    before(:each) do
+      expect(File).to receive(:exists?).with(ROUTE_FILE).and_return(true)
+      expect(AnnotateRoutes).to receive(:`).with('rails routes').and_return("another good line\ngood line")
+      expect(File).to receive(:open).with(ROUTE_FILE, 'wb').and_yield(mock_file)
+      expect(AnnotateRoutes).to receive(:puts).with(ANNOTATION_ADDED)
+    end
+
+    it 'should annotate and add a newline!' do
+      expect(File).to receive(:read).with(ROUTE_FILE).and_return("ActionController::Routing...\nfoo")
+      expect(@mock_file).to receive(:puts).with(/ActionController::Routing...\nfoo\n\n# == Route Map\n#\n# another good line\n# good line\n/)
+      AnnotateRoutes.do_annotations(routes_command: "rails routes")
+    end
+
+    it 'should not add a newline if there are empty lines' do
+      expect(File).to receive(:read).with(ROUTE_FILE).and_return("ActionController::Routing...\nfoo\n")
+      expect(@mock_file).to receive(:puts).with(/ActionController::Routing...\nfoo\n\n# == Route Map\n#\n# another good line\n# good line\n/)
+      AnnotateRoutes.do_annotations(routes_command: "rails routes")
+    end
+
+    it 'should add a timestamp when :timestamp is passed' do
+      expect(File).to receive(:read).with(ROUTE_FILE).and_return("ActionController::Routing...\nfoo")
+      expect(@mock_file).to receive(:puts).with(/ActionController::Routing...\nfoo\n\n# == Route Map \(Updated \d{4}-\d{2}-\d{2} \d{2}:\d{2}\)\n#\n# another good line\n# good line\n/)
+      AnnotateRoutes.do_annotations(routes_command: "rails routes", timestamp: true)
     end
   end
 

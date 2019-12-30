@@ -187,7 +187,8 @@ module AnnotateRoutes
     end
 
     def app_routes_map(options)
-      routes_map = `rake routes`.chomp("\n").split(/\n/, -1)
+      cmd = options[:routes_command] || "rake routes"
+      routes_map = `#{cmd}`.chomp("\n").split(/\n/, -1)
 
       # In old versions of Rake, the first line of output was the cwd.  Not so
       # much in newer ones.  We ditch that line if it exists, and if not, we
