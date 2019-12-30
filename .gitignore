@@ -5,6 +5,7 @@
 .bundle
 .gems
 .rbenv-version
+.tool-versions
 .ruby-*
 /.idea/
 /.rbx
