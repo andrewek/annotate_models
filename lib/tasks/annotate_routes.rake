@@ -10,6 +10,7 @@ task :annotate_routes => :environment do
   options[:require] = ENV['require'] ? ENV['require'].split(',') : []
   options[:wrapper_open] = Annotate::Helpers.fallback(ENV['wrapper_open'], ENV['wrapper'])
   options[:wrapper_close] = Annotate::Helpers.fallback(ENV['wrapper_close'], ENV['wrapper'])
+  options[:routes_command] = Annotate::Helpers.fallback(ENV['routes_command'], "rake routes")
   AnnotateRoutes.do_annotations(options)
 end
 
